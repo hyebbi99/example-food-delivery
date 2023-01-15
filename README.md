@@ -233,6 +233,84 @@ Vary: Access-Control-Request-Headers
     }
 ```
 
+```
+package food.delivery.infra;
+
+import javax.naming.NameParser;
+
+import javax.naming.NameParser;
+import javax.transaction.Transactional;
+
+import food.delivery.config.kafka.KafkaProcessor;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.stereotype.Service;
+import food.delivery.domain.*;
+
+@Service
+@Transactional
+public class PolicyHandler{
+    @Autowired OrderRepository orderRepository;
+    
+    @StreamListener(KafkaProcessor.INPUT)
+    public void whatever(@Payload String eventString){}
+
+    @StreamListener(value=KafkaProcessor.INPUT, condition="headers['type']=='OrderAccepted'")
+    public void wheneverOrderAccepted_UpdateStatus(@Payload OrderAccepted orderAccepted){
+
+        OrderAccepted event = orderAccepted;
+        System.out.println("\n\n##### listener UpdateStatus : " + orderAccepted + "\n\n");
+        // Sample Logic //
+        Order.updateStatus(event);
+    }
+    
+    @StreamListener(value=KafkaProcessor.INPUT, condition="headers['type']=='OrderRejected'")
+    public void wheneverOrderRejected_UpdateStatus(@Payload OrderRejected orderRejected){
+        OrderRejected event = orderRejected;
+        System.out.println("\n\n##### listener UpdateStatus : " + orderRejected + "\n\n");
+        // Sample Logic //
+        Order.updateStatus(event);
+    }
+    
+    @StreamListener(value=KafkaProcessor.INPUT, condition="headers['type']=='CookStarted'")
+    public void wheneverCookStarted_UpdateStatus(@Payload CookStarted cookStarted){
+        CookStarted event = cookStarted;
+        System.out.println("\n\n##### listener UpdateStatus : " + cookStarted + "\n\n");
+        // Sample Logic //
+        Order.updateStatus(event);
+    }
+    
+    @StreamListener(value=KafkaProcessor.INPUT, condition="headers['type']=='DeliveryStarted'")
+    public void wheneverDeliveryStarted_UpdateStatus(@Payload DeliveryStarted deliveryStarted){
+        DeliveryStarted event = deliveryStarted;
+        System.out.println("\n\n##### listener UpdateStatus : " + deliveryStarted + "\n\n");
+        // Sample Logic //
+        Order.updateStatus(event);
+    }
+    
+    @StreamListener(value=KafkaProcessor.INPUT, condition="headers['type']=='DeliveryFinished'")
+    public void wheneverDeliveryFinished_UpdateStatus(@Payload DeliveryFinished deliveryFinished){
+        DeliveryFinished event = deliveryFinished;
+        System.out.println("\n\n##### listener UpdateStatus : " + deliveryFinished + "\n\n");
+        // Sample Logic //
+        Order.updateStatus(event);
+    }
+    
+    @StreamListener(value=KafkaProcessor.INPUT, condition="headers['type']=='CookFinished'")
+    public void wheneverCookFinished_UpdateStatus(@Payload CookFinished cookFinished){
+
+        CookFinished event = cookFinished;
+        System.out.println("\n\n##### listener UpdateStatus : " + cookFinished + "\n\n");
+        // Sample Logic //
+        Order.updateStatus(event);
+    }
+}
+
+
+```
 ## CQRS
 ![image](https://user-images.githubusercontent.com/85150301/212533981-7fcc22a4-a1d5-4053-9bf2-4cec2c99c980.png)
 ![image](https://user-images.githubusercontent.com/85150301/212533986-4c768795-93c7-48d2-b54d-0a91da3d06e8.png)
