@@ -15,7 +15,8 @@
 1. 주문상태가 바뀔 때 마다 카톡으로 알림을 보낸다
 
 
-![image](https://user-images.githubusercontent.com/85150301/212534625-2b76855f-d871-4627-93da-dfdccc0c5f41.png)
+![image](https://user-images.githubusercontent.com/85150301/212534911-f541201f-66de-4270-973b-fea00cc42e4c.png)
+
 
 ## DDD 의 적용
 
