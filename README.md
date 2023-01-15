@@ -33,7 +33,7 @@ mvn spring-boot:run
 
 ```
 
-## 1.	포트확인하기
+### 1.	포트확인하기
 
 ```
 gitpod /workspace/food-delivery (main) $ http GET localhost:8081/
@@ -59,7 +59,8 @@ Vary: Access-Control-Request-Headers
     }
 }
 ```
-## 2. 주문하기
+
+### 2. 주문하기
 ```
 gitpod /workspace/food-delivery (main) $ http POST localhost:8081/orders orderId=a menuInfo=ramen qty=1
 HTTP/1.1 201 
@@ -122,7 +123,7 @@ Vary: Access-Control-Request-Headers
 }
 ```
 
-## 3.	주문확인하기
+### 3.	주문확인하기
 ```
 gitpod /workspace/food-delivery (main) $ http GET localhost:8081/orders/1
 HTTP/1.1 200 
@@ -183,7 +184,8 @@ Vary: Access-Control-Request-Headers
     "storeId": null
 }
 ```
-## 4.	주문상태 수정하기 
+
+### 4.	주문상태 수정하기 
 ```
 gitpod /workspace/food-delivery (main) $ http PATCH http://localhost:8081/orders/1 deliveryStatus=notStarted
 HTTP/1.1 200 
@@ -212,6 +214,53 @@ Vary: Access-Control-Request-Headers
     "orderId": "a",
     "qty": 1,
     "storeId": null
+}
+```
+
+## Saga (Pub/Sub)
+```
+    public static void orderInfoTransfer(Ordered ordered){
+        StoreOrder storeOrder = new StoreOrder();
+
+        storeOrder.setOrderId(ordered.getOrderId());
+        storeOrder.setCustomerId(ordered.getCustomerId());
+        storeOrder.setDeliveryStatus(ordered.getDeliveryStatus());
+        storeOrder.setAddress(ordered.getAddress());
+        storeOrder.setQty(ordered.getQty());
+
+        repository().save(storeOrder);
+
+    }
+```
+
+## CQRS
+![image](https://user-images.githubusercontent.com/85150301/212533981-7fcc22a4-a1d5-4053-9bf2-4cec2c99c980.png)
+![image](https://user-images.githubusercontent.com/85150301/212533986-4c768795-93c7-48d2-b54d-0a91da3d06e8.png)
+
+
+## Compensation / Correlation
+```
+package food.delivery.domain;
+
+import food.delivery.domain.*;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+
+@RepositoryRestResource(collectionResourceRel="storeOrders", path="storeOrders")
+public interface StoreOrderRepository extends PagingAndSortingRepository<StoreOrder, Long>{
+    java.util.Optional<StoreOrder> findByOrderId(String orderId);
+}
+
+```
+
+```
+public static void orderCancel(OrderCancelled orderCancelled){
+        
+    repository().findById(orderCancelled.getOrderId()).ifPresent(storeOrder->{
+        storeOrder.setDeliveryStatus("주문 취소");  // do something
+            repository().save(storeOrder);
+        });
+    }
 }
 ```
 
